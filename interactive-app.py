@@ -17,8 +17,7 @@ summary = dcc.Markdown(children='Lorem ipsum dolor sit amet, consectetur adipisc
                                 'aecenas vehicula rutrum arcu, sit amet vehicula diam scelerisque non. '
                                 'Aenean vitae condimentum massa, quis iaculis massa. Nam in facilisis erat, '
                                 'in pellentesque nisl. Etiam dignissim suscipit erat, quis lacinia mauris cursus nec. '
-                                'Vestibulum et aliquam ex. Pellentesque diam libero, porta non eros eu, l'
-                                'aoreet faucibus eros. Ut viverra mattis accumsan.')
+                                'Vestibulum et aliquam ex.')
 mygraph = dcc.Graph(figure={})
 dropdown = dcc.Dropdown(options=['Monday', 'Tuesday', 'Wednesday', 'Thursday'],
                         value='Monday',  # initial value displayed when page first loads
