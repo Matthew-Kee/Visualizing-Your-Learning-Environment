@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 
 from plotly.subplots import make_subplots
 
-df = px.pd.read_csv('https://raw.githubusercontent.com/malakali542/D1-361/main/13_41_10_30_6_2022.csv')
+df = px.pd.read_csv('https://raw.githubusercontent.com/malakali542/361Design1/main/mock_data1.csv')
 
 # Build components
 app = Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL])
@@ -26,7 +26,7 @@ dropdown = dcc.Dropdown(options=['Monday', 'Tuesday', 'Wednesday', 'Thursday'],
 fig = make_subplots(rows=3, cols=1, subplot_titles=("Temperature", "Humidity", "Light"), vertical_spacing=0.30)
 fig.add_trace((go.Scatter(
     x=df["Time"],
-    y=df[" temperature"],
+    y=df[" Temperature"],
     mode="lines",
     name="temperature",
 )), row=1, col=1)
@@ -40,7 +40,7 @@ fig.add_trace((go.Scatter(
 
 fig.add_trace((go.Scatter(
     x=df["Time"],
-    y=df[" light"],
+    y=df[" Light"],
     mode="lines",
     name="light"
 )), row=3, col=1)
