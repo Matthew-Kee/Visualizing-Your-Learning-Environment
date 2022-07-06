@@ -15,6 +15,9 @@
 # Add images to each dropdown option
 # Increase the size of the graphs
 
+# import pandas for Data Frame manipulation
+import pandas as pd
+
 # import Dash class, the dcc (Dash Core Components) module, Dash html, Output and Input (for callbacks), and the dbc (Dash Bootstrap Components) module
 from dash import Dash, dcc, html, Output, Input  
 import dash_bootstrap_components as dbc
@@ -34,6 +37,9 @@ white_button_style = {'background-color': 'white',
 # read the csv of mock data from the file hosted on GitHub and import it into a df (data frame) which is a table of rows and columns
 csvFile = 'https://raw.githubusercontent.com/malakali542/361Design1/main/mock_data1.csv'
 df = px.pd.read_csv(csvFile)
+# TODO: STOP HARDCODING THE DATE, I am hardcoding to June 30th 2022 right now because that's when the mock data was taken
+# append the date of data collection to the times in the "Time" column so that Pandas can interpret the string as a DateTime object
+df["Time"] = pd.to_datetime("2022-06-30" + ' ' + df["Time"])
 
 # DECLARE COMPONENTS:
 app = Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL])
@@ -52,13 +58,36 @@ graph = dcc.Graph(figure={})
 fig = make_subplots(rows=3, cols=1, subplot_titles=("Temperature", "Humidity", "Light"))
 fig.update_layout(height = 1000)
 
-# add the Temperature vs. Time plot in row 1
+# add section 1 of the Temperature vs. Time plot in row 1
+startTime1 = pd.to_datetime("2022-06-30 13:00:00")
+endTime1 = pd.to_datetime("2022-06-30 13:54:00")
 fig.add_trace((go.Scatter(
-    x=df["Time"],
-    y=df[" Temperature"],
+    x=df.loc[(df["Time"] > startTime1) & (df["Time"] < endTime1), "Time"],
+    y=df.loc[(df["Time"] > startTime1) & (df["Time"] < endTime1), " Temperature"],
     mode="lines",
-    name="temperature",
+    name="E7 temperature",
 )), row=1, col=1)
+
+# add section 2 of the Temperature vs. Time plot in row 1
+startTime2 = endTime1
+endTime2 = pd.to_datetime("2022-06-30 14:20:00")
+fig.add_trace((go.Scatter(
+    x=df.loc[(df["Time"] > startTime2) & (df["Time"] < endTime2), "Time"],
+    y=df.loc[(df["Time"] > startTime2) & (df["Time"] < endTime2), " Temperature"],
+    mode="lines",
+    name="SYDE lounge temperature",
+)), row=1, col=1)
+
+# add section 3 of the Temperature vs. Time plot in row 1
+startTime3 = endTime2
+endTime3 = pd.to_datetime("2022-06-30 15:00:00")
+fig.add_trace((go.Scatter(
+    x=df.loc[(df["Time"] > startTime3) & (df["Time"] < endTime3), "Time"],
+    y=df.loc[(df["Time"] > startTime3) & (df["Time"] < endTime3), " Temperature"],
+    mode="lines",
+    name="DC library temperature",
+)), row=1, col=1)
+
 # add the Humidity vs. Time plot in row 2
 fig.add_trace((go.Scatter(
     x=df["Time"],
