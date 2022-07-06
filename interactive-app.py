@@ -15,14 +15,20 @@
 # Add images to each dropdown option
 # Increase the size of the graphs
 
-# import Dash class, the dcc (Dash Core Components) module, Output and Input (for callbacks), and the dbc (Dash Bootstrap Components) module
-from dash import Dash, dcc, Output, Input  
+# import Dash class, the dcc (Dash Core Components) module, Dash html, Output and Input (for callbacks), and the dbc (Dash Bootstrap Components) module
+from dash import Dash, dcc, html, Output, Input  
 import dash_bootstrap_components as dbc
 
 # import Plotly express module, Plotly graph objects, and the make_subplots function
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+
+# STYLES:
+white_button_style = {'background-color': 'white',
+                      'color': 'black',
+                      'height': '50px',
+                      'width': '400px'}
 
 # PARSE CSV FILE:
 # read the csv of mock data from the file hosted on GitHub and import it into a df (data frame) which is a table of rows and columns
@@ -34,16 +40,17 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL])
 title = dcc.Markdown(children='Epic Title')
 subtitle = dcc.Markdown(children='Visualizing daily student experience in place and time.')
 week = dcc.Markdown(children='July 4th to July 7th')
+mondayButton = html.Button('Monday', id='monday-button', style=white_button_style)
+tuesdayButton = html.Button('Tuesday', id='tuesday-button', style=white_button_style)
+wednesdayButton = html.Button('Wednesday', id='wednesday-button', style=white_button_style)
+thursdayButton = html.Button('Thursday', id='thursday-button', style=white_button_style)
 summaryTitle = dcc.Markdown(children='Check out other weeks:')
-dropdown = dcc.Dropdown(options=['Monday', 'Tuesday', 'Wednesday', 'Thursday'], # dropdown options (days of the week)
-                        value='Monday',  # initial value displayed when page first loads
-                        clearable=False, # hide the "x" button that allows users to clear the dropdown
-                        searchable=False) # remove the ability for users to type and search through the options
 graph = dcc.Graph(figure={}) 
 
 # MAKE FIGURES:
 # make 3 rows of subplots, for Temperature, Humidity, and Light
-fig = make_subplots(rows=3, cols=1, subplot_titles=("Temperature", "Humidity", "Light"), vertical_spacing=0.30)
+fig = make_subplots(rows=3, cols=1, subplot_titles=("Temperature", "Humidity", "Light"))
+fig.update_layout(height = 1000)
 
 # add the Temperature vs. Time plot in row 1
 fig.add_trace((go.Scatter(
@@ -72,8 +79,8 @@ fig.add_trace((go.Scatter(
 app.layout = dbc.Container([
     # we currently have a single row
     dbc.Row([ 
-        # add a column on the left with the title, dropdown, and summary
-        dbc.Col([title, subtitle, week, dropdown, summaryTitle], width=4),
+        # add a column on the left with the title, subtitle, week, buttons, and summary
+        dbc.Col([title, subtitle, week, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, summaryTitle], width=4),
         # add a column on the right for the graph, and set it to display fig which has our 3 subplots
         dbc.Col([dcc.Graph(
             id='graph',
