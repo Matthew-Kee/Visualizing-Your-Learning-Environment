@@ -151,7 +151,8 @@ def createDefaultPlot():
     for index, plot in enumerate(plots, start=1):
         # Add E7 6008 section
         figure.add_trace((go.Scatter(
-            x=df.loc[(df['DateTime'] > MONDAY_CLASS_START_TIME_1) & (df['DateTime'] < MONDAY_CLASS_END_TIME_2), 'DateTime'],
+            x=df.loc[(df['DateTime'] > MONDAY_CLASS_START_TIME_1) & (df['DateTime'] < MONDAY_CLASS_END_TIME_1) | 
+            (df['DateTime'] > MONDAY_CLASS_START_TIME_2) & (df['DateTime'] < MONDAY_CLASS_END_TIME_2), 'DateTime'],
             y=df.loc[(df['DateTime'] > MONDAY_CLASS_START_TIME_1) & (df['DateTime'] < MONDAY_CLASS_END_TIME_1) | 
             (df['DateTime'] > MONDAY_CLASS_START_TIME_2) & (df['DateTime'] < MONDAY_CLASS_END_TIME_2), plot],
             mode='lines',
@@ -187,8 +188,6 @@ def createDefaultPlot():
     return figure
 
 def updatePlotForDate(date):
-    figure = fig
-
     class_start_time_1 = None
     class_end_time_1 = None
     class_start_time_2 = None
@@ -236,37 +235,81 @@ def updatePlotForDate(date):
             DC_start_time = THURSDAY_DC_START_TIME
             DC_end_time = THURSDAY_DC_END_TIME
 
+    figure = fig
+    figure.data = []
+
     # array of the 3 columns of data in the csv that we will plot against time
     plots = ['Temperature', 'Humidity', 'Light']
     # enumerate through all of the subplots
     for index, plot in enumerate(plots, start=1):
-        # Update E7 6008 section
-        figure.update_traces(
-            x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_2), 'DateTime'],
+        # Add E7 6008 section
+        figure.add_trace((go.Scatter(
+            x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
+            (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), 'DateTime'],
             y=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
             (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), plot],
-            selector=dict(name="E7 6008"),
-            row=index
-        )
+            mode='lines',
+            name='E7 6008',
+            connectgaps=False,
+            line=dict(color='#FF2D2D'),
+            legendgroup=index,
+        )), row=index, col=1)
 
-        # Update SYDE lounge section
-        figure.update_traces(
+        # Add SYDE lounge section
+        figure.add_trace((go.Scatter(
             x=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), 'DateTime'],
-            y=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time)],
-            selector=dict(name="SYDE lounge"),
-            row=index
-        )
+            y=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), plot],
+            mode='lines',
+            name='SYDE lounge',
+            connectgaps=False,
+            line=dict(color='#5048E5'),
+            legendgroup=index,
+        )), row=index, col=1)
 
-        # Update DC library section
-        figure.update_traces(
+        # Add DC section
+        figure.add_trace((go.Scatter(
             x=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), 'DateTime'],
-            y=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time)],
-            selector=dict(name="DC library"),
-            row=index
-        )
+            y=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), plot],
+            mode='lines',
+            name='DC library',
+            connectgaps=False,
+            line=dict(color='#62B013'),
+            legendgroup=index,
+        )), row=index, col=1)
 
-        # print("Updating " + plot + " in row " + str(index) + " for E7, SYDE lounge, and DC")
     return figure
+
+    # # array of the 3 columns of data in the csv that we will plot against time
+    # plots = ['Temperature', 'Humidity', 'Light']
+    # # enumerate through all of the subplots
+    # for index, plot in enumerate(plots, start=1):
+    #     # Update E7 6008 section
+    #     figure.update_traces(
+    #         x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_2), 'DateTime'],
+    #         y=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
+    #         (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), plot],
+    #         selector=dict(name="E7 6008"),
+    #         row=index
+    #     )
+
+    #     # Update SYDE lounge section
+    #     figure.update_traces(
+    #         x=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), 'DateTime'],
+    #         y=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), plot],
+    #         selector=dict(name="SYDE lounge"),
+    #         row=index
+    #     )
+
+    #     # Update DC library section
+    #     figure.update_traces(
+    #         x=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), 'DateTime'],
+    #         y=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), plot],
+    #         selector=dict(name="DC library"),
+    #         row=index
+    #     )
+
+    #     # print("Updating " + plot + " in row " + str(index) + " for E7, SYDE lounge, and DC")
+    # return figure
 
 # LAYOUT COMPONENTS USING GRIDS:
 # declare a top-level container
