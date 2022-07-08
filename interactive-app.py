@@ -18,10 +18,14 @@
 # Increase the size of the graphs
 
 # import pandas for Data Frame manipulation
+from calendar import MONDAY, TUESDAY, WEDNESDAY, weekday
 import pandas as pd
 
 # import NumPy for number manipulation
 from numpy import NaN
+
+# import enums for better match statements
+from enum import Enum
 
 # import Dash class, the dcc (Dash Core Components) module, Dash html, callback context, 
 # Output and Input (for callbacks), and the dbc (Dash Bootstrap Components) module
@@ -47,14 +51,49 @@ MONDAY_LOUNGE_END_TIME = pd.to_datetime('2022-07-04 13:00:00')
 MONDAY_CLASS_START_TIME_2 = pd.to_datetime('2022-07-04 13:00:00')
 MONDAY_CLASS_END_TIME_2 = pd.to_datetime('2022-07-04 15:20:00')
 MONDAY_DC_START_TIME = pd.to_datetime('2022-07-04 15:20:00')
-MONDAY_DC_END_TIME = pd.to_datetime('2022-07-04 23:00:00')
+MONDAY_DC_END_TIME = pd.to_datetime('2022-07-04 23:59:00')
+
+TUESDAY_CLASS_START_TIME_1 = pd.to_datetime('2022-07-05 08:00:00')
+TUESDAY_CLASS_END_TIME_1 = pd.to_datetime('2022-07-05 12:35:00')
+TUESDAY_LOUNGE_START_TIME = pd.to_datetime('2022-07-05 12:35:00')
+TUESDAY_LOUNGE_END_TIME = pd.to_datetime('2022-07-05 13:30:00')
+TUESDAY_CLASS_START_TIME_2 = pd.to_datetime('2022-07-05 13:30:00')
+TUESDAY_CLASS_END_TIME_2 = pd.to_datetime('2022-07-05 15:50:00')
+TUESDAY_DC_START_TIME = pd.to_datetime('2022-07-05 15:50:00')
+TUESDAY_DC_END_TIME = pd.to_datetime('2022-07-05 23:59:00')
+
+WEDNESDAY_CLASS_START_TIME_1 = pd.to_datetime('2022-07-06 08:00:00')
+WEDNESDAY_CLASS_END_TIME_1 = pd.to_datetime('2022-07-06 11:20:00')
+WEDNESDAY_LOUNGE_START_TIME = pd.to_datetime('2022-07-06 11:20:00')
+WEDNESDAY_LOUNGE_END_TIME = pd.to_datetime('2022-07-06 12:30:00')
+WEDNESDAY_CLASS_START_TIME_2 = pd.to_datetime('2022-07-06 12:30:00')
+WEDNESDAY_CLASS_END_TIME_2 = pd.to_datetime('2022-07-06 17:00:00')
+WEDNESDAY_DC_START_TIME = pd.to_datetime('2022-07-06 17:00:00')
+WEDNESDAY_DC_END_TIME = pd.to_datetime('2022-07-06 23:59:00')
+
+THURSDAY_CLASS_START_TIME_1 = pd.to_datetime('2022-07-07 08:00:00')
+THURSDAY_CLASS_END_TIME_1 = pd.to_datetime('2022-07-07 12:20:00')
+THURSDAY_LOUNGE_START_TIME = pd.to_datetime('2022-07-07 12:20:00')
+THURSDAY_LOUNGE_END_TIME = pd.to_datetime('2022-07-07 13:30:00')
+THURSDAY_CLASS_START_TIME_2 = pd.to_datetime('2022-07-07 13:30:00')
+THURSDAY_CLASS_END_TIME_2 = pd.to_datetime('2022-07-07 14:50:00')
+THURSDAY_DC_START_TIME = pd.to_datetime('2022-07-07 14:50:00')
+THURSDAY_DC_END_TIME = pd.to_datetime('2022-07-07 23:59:00')
 
 FIGURE_HEIGHT = 1000
+
+# ENUMS:
+class Weekday(Enum):
+    MONDAY = 1
+    TUESDAY = 2
+    WEDNESDAY = 3
+    THURSDAY = 4
 
 # PARSE CSV FILE:
 # read the csv of mock data from the file hosted on GitHub and import it into a df (data frame) which is a table of rows and columns
 # csvFile = 'https://raw.githubusercontent.com/malakali542/361Design1/main/mock_data1.csv'
-csvFile = 'Data_July4ToJuly6.csv'
+# csvFile = 'Data_July4ToJuly6.csv'
+csvFile = 'Data_July4ToJuly7.csv'
 # csvFile = 'TestData.csv'
 df = px.pd.read_csv(csvFile)
 # use the Date and Time columns to create a DateTime column of DateTime objects
@@ -77,7 +116,7 @@ fig.update_layout(
     height = FIGURE_HEIGHT,
     # yaxis_range=[20,30],
     showlegend=True,
-    legend_tracegroupgap=(FIGURE_HEIGHT-100)/3)    
+    legend_tracegroupgap=(FIGURE_HEIGHT-100)/3)
 fig.update_xaxes(tickformat="%I:%M %p")
 
 # CALLBACKS FOR BUTTONS:
@@ -91,19 +130,14 @@ fig.update_xaxes(tickformat="%I:%M %p")
 def update_figure(monday, tuesday, wednesday, thursday):
     button_id = [p['prop_id'] for p in callback_context.triggered][0]
     if 'monday-button' in button_id:
-        figure = make_subplots(rows=3, cols=1, subplot_titles=('Monday', 'Monday', 'Monday'))
-        return figure
+        return updatePlotForDate(Weekday.MONDAY)
     elif 'tuesday-button' in button_id:
-        figure = make_subplots(rows=3, cols=1, subplot_titles=('Tuesday', 'Tuesday', 'Tuesday'))
-        return figure
+        return updatePlotForDate(Weekday.TUESDAY)
     elif 'wednesday-button' in button_id:
-        figure = make_subplots(rows=3, cols=1, subplot_titles=('Wednesday', 'Wednesday', 'Wednesday'))
-        return figure
+        return updatePlotForDate(Weekday.WEDNESDAY)
     elif 'thursday-button' in button_id:
-        figure = make_subplots(rows=3, cols=1, subplot_titles=('Thursday', 'Thursday', 'Thursday'))
-        return figure
+        return updatePlotForDate(Weekday.THURSDAY)
     else:
-        print("HI MATTHEW")
         return createDefaultPlot()
         
 
@@ -144,12 +178,94 @@ def createDefaultPlot():
             x=df.loc[(df['DateTime'] > MONDAY_DC_START_TIME) & (df['DateTime'] < MONDAY_DC_END_TIME), 'DateTime'],
             y=df.loc[(df['DateTime'] > MONDAY_DC_START_TIME) & (df['DateTime'] < MONDAY_DC_END_TIME), plot],
             mode='lines',
-            name='SYDE lounge',
+            name='DC library',
             connectgaps=False,
-            line=dict(color='#5048E5'),
+            line=dict(color='#62B013'),
             legendgroup=index,
         )), row=index, col=1)
 
+    return figure
+
+def updatePlotForDate(date):
+    figure = fig
+
+    class_start_time_1 = None
+    class_end_time_1 = None
+    class_start_time_2 = None
+    class_end_time_2 = None
+    lounge_start_time = None
+    lounge_end_time = None
+    DC_start_time = None
+    DC_end_time = None
+
+    match date:
+        case Weekday.MONDAY:
+            class_start_time_1 = MONDAY_CLASS_START_TIME_1
+            class_end_time_1 = MONDAY_CLASS_END_TIME_1
+            class_start_time_2 = MONDAY_CLASS_START_TIME_2
+            class_end_time_2 = MONDAY_CLASS_END_TIME_2
+            lounge_start_time = MONDAY_LOUNGE_START_TIME
+            lounge_end_time = MONDAY_LOUNGE_END_TIME
+            DC_start_time = MONDAY_DC_START_TIME
+            DC_end_time = MONDAY_DC_END_TIME
+        case Weekday.TUESDAY:
+            class_start_time_1 = TUESDAY_CLASS_START_TIME_1
+            class_end_time_1 = TUESDAY_CLASS_END_TIME_1
+            class_start_time_2 = TUESDAY_CLASS_START_TIME_2
+            class_end_time_2 = TUESDAY_CLASS_END_TIME_2
+            lounge_start_time = TUESDAY_LOUNGE_START_TIME
+            lounge_end_time = TUESDAY_LOUNGE_END_TIME
+            DC_start_time = TUESDAY_DC_START_TIME
+            DC_end_time = TUESDAY_DC_END_TIME
+        case Weekday.WEDNESDAY:
+            class_start_time_1 = WEDNESDAY_CLASS_START_TIME_1
+            class_end_time_1 = WEDNESDAY_CLASS_END_TIME_1
+            class_start_time_2 = WEDNESDAY_CLASS_START_TIME_2
+            class_end_time_2 = WEDNESDAY_CLASS_END_TIME_2
+            lounge_start_time = WEDNESDAY_LOUNGE_START_TIME
+            lounge_end_time = WEDNESDAY_LOUNGE_END_TIME
+            DC_start_time = WEDNESDAY_DC_START_TIME
+            DC_end_time = WEDNESDAY_DC_END_TIME
+        case Weekday.THURSDAY:
+            class_start_time_1 = THURSDAY_CLASS_START_TIME_1
+            class_end_time_1 = THURSDAY_CLASS_END_TIME_1
+            class_start_time_2 = THURSDAY_CLASS_START_TIME_2
+            class_end_time_2 = THURSDAY_CLASS_END_TIME_2
+            lounge_start_time = THURSDAY_LOUNGE_START_TIME
+            lounge_end_time = THURSDAY_LOUNGE_END_TIME
+            DC_start_time = THURSDAY_DC_START_TIME
+            DC_end_time = THURSDAY_DC_END_TIME
+
+    # array of the 3 columns of data in the csv that we will plot against time
+    plots = ['Temperature', 'Humidity', 'Light']
+    # enumerate through all of the subplots
+    for index, plot in enumerate(plots, start=1):
+        # Update E7 6008 section
+        figure.update_traces(
+            x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_2), 'DateTime'],
+            y=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
+            (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), plot],
+            selector=dict(name="E7 6008"),
+            row=index
+        )
+
+        # Update SYDE lounge section
+        figure.update_traces(
+            x=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), 'DateTime'],
+            y=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time)],
+            selector=dict(name="SYDE lounge"),
+            row=index
+        )
+
+        # Update DC library section
+        figure.update_traces(
+            x=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), 'DateTime'],
+            y=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time)],
+            selector=dict(name="DC library"),
+            row=index
+        )
+
+        # print("Updating " + plot + " in row " + str(index) + " for E7, SYDE lounge, and DC")
     return figure
 
 # LAYOUT COMPONENTS USING GRIDS:
