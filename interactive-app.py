@@ -93,10 +93,7 @@ class Weekday(Enum):
 
 # PARSE CSV FILE:
 # read the csv of mock data from the file hosted on GitHub and import it into a df (data frame) which is a table of rows and columns
-# csvFile = 'https://raw.githubusercontent.com/malakali542/361Design1/main/mock_data1.csv'
-# csvFile = 'Data_July4ToJuly6.csv'
 csvFile = 'Data_July4ToJuly7.csv'
-# csvFile = 'TestData.csv'
 df = px.pd.read_csv(csvFile)
 # use the Date and Time columns to create a DateTime column of DateTime objects
 df.insert(loc=0, column='DateTime', value=pd.to_datetime(df['Date'] + ' ' + df['Time'], format='%d-%m-%Y %H:%M:%S'), allow_duplicates=True)
@@ -116,7 +113,6 @@ graph = dcc.Graph(id='graph', figure={})
 fig = make_subplots(rows=3, cols=1, subplot_titles=('Temperature', 'Humidity', 'Light'))
 fig.update_layout(
     height = FIGURE_HEIGHT,
-    # yaxis_range=[20,30],
     showlegend=True,
     legend_tracegroupgap=(FIGURE_HEIGHT-100)/3)
 fig.update_xaxes(tickformat="%I:%M %p")
@@ -162,7 +158,6 @@ def createDefaultPlot():
             connectgaps=False,
             line=dict(color='#FF2D2D'),
             legendgroup=index,
-            # hovertemplate='%{x}<extra></extra>'
         )), row=index, col=1)
 
         # Add SYDE lounge section
