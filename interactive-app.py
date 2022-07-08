@@ -238,80 +238,85 @@ def updatePlotForDate(date):
             DC_end_time = THURSDAY_DC_END_TIME
 
     figure = fig
-    figure.data = []
 
-    # array of the 3 columns of data in the csv that we will plot against time
-    plots = ['Temperature', 'Humidity', 'Light']
-    # enumerate through all of the subplots
-    for index, plot in enumerate(plots, start=1):
-        # Add E7 6008 section
-        figure.add_trace((go.Scatter(
-            x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
-            (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), 'DateTime'],
-            y=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
-            (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), plot],
-            mode='lines',
-            name='E7 6008',
-            connectgaps=False,
-            line=dict(color='#FF2D2D'),
-            legendgroup=index,
-        )), row=index, col=1)
-
-        # Add SYDE lounge section
-        figure.add_trace((go.Scatter(
-            x=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), 'DateTime'],
-            y=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), plot],
-            mode='lines',
-            name='SYDE lounge',
-            connectgaps=False,
-            line=dict(color='#5048E5'),
-            legendgroup=index,
-        )), row=index, col=1)
-
-        # Add DC section
-        figure.add_trace((go.Scatter(
-            x=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), 'DateTime'],
-            y=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), plot],
-            mode='lines',
-            name='DC library',
-            connectgaps=False,
-            line=dict(color='#62B013'),
-            legendgroup=index,
-        )), row=index, col=1)
-
-    return figure
+    # BRUTE FORCE APPROACH: This code completely redraws the figure each time we select a new day
+    # I've commented this out in favour of using the update_traces method to improve performance
+    # I'm keeping it here in case update_traces turns out to be buggy
+    
+    # figure.data = []
 
     # # array of the 3 columns of data in the csv that we will plot against time
     # plots = ['Temperature', 'Humidity', 'Light']
     # # enumerate through all of the subplots
     # for index, plot in enumerate(plots, start=1):
-    #     # Update E7 6008 section
-    #     figure.update_traces(
-    #         x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_2), 'DateTime'],
+    #     # Add E7 6008 section
+    #     figure.add_trace((go.Scatter(
+    #         x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
+    #         (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), 'DateTime'],
     #         y=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
     #         (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), plot],
-    #         selector=dict(name="E7 6008"),
-    #         row=index
-    #     )
+    #         mode='lines',
+    #         name='E7 6008',
+    #         connectgaps=False,
+    #         line=dict(color='#FF2D2D'),
+    #         legendgroup=index,
+    #     )), row=index, col=1)
 
-    #     # Update SYDE lounge section
-    #     figure.update_traces(
+    #     # Add SYDE lounge section
+    #     figure.add_trace((go.Scatter(
     #         x=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), 'DateTime'],
     #         y=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), plot],
-    #         selector=dict(name="SYDE lounge"),
-    #         row=index
-    #     )
+    #         mode='lines',
+    #         name='SYDE lounge',
+    #         connectgaps=False,
+    #         line=dict(color='#5048E5'),
+    #         legendgroup=index,
+    #     )), row=index, col=1)
 
-    #     # Update DC library section
-    #     figure.update_traces(
+    #     # Add DC section
+    #     figure.add_trace((go.Scatter(
     #         x=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), 'DateTime'],
     #         y=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), plot],
-    #         selector=dict(name="DC library"),
-    #         row=index
-    #     )
+    #         mode='lines',
+    #         name='DC library',
+    #         connectgaps=False,
+    #         line=dict(color='#62B013'),
+    #         legendgroup=index,
+    #     )), row=index, col=1)
 
-    #     # print("Updating " + plot + " in row " + str(index) + " for E7, SYDE lounge, and DC")
     # return figure
+
+    # array of the 3 columns of data in the csv that we will plot against time
+    plots = ['Temperature', 'Humidity', 'Light']
+    # enumerate through all of the subplots
+    for index, plot in enumerate(plots, start=1):
+        # Update E7 6008 section
+        figure.update_traces(
+            x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
+            (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), 'DateTime'],
+            y=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
+            (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), plot],
+            selector=dict(name="E7 6008"),
+            row=index
+        )
+
+        # Update SYDE lounge section
+        figure.update_traces(
+            x=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), 'DateTime'],
+            y=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), plot],
+            selector=dict(name="SYDE lounge"),
+            row=index
+        )
+
+        # Update DC library section
+        figure.update_traces(
+            x=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), 'DateTime'],
+            y=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), plot],
+            selector=dict(name="DC library"),
+            row=index
+        )
+
+    return figure
 
 # LAYOUT COMPONENTS USING GRIDS:
 # declare a top-level container
