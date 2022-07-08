@@ -11,11 +11,13 @@
 # - Add callbacks so that the Monday-Thursday buttons/dropdown - done!
 # - Figure out how to do the line segments for different locations - done!
 # - Write a default function that sets up the graph for the first time and is only called once - done!
-# - Write a function that updates the graph for data from each specific day when buttons are clicked
+# - Write a function that updates the graph for data from each specific day when buttons are clicked - done!
 
 # Visual nice-to-haves:
 # Add images to each dropdown option
 # Increase the size of the graphs
+# Add axis titles and units to the axes
+# Add a summary, buttons that link to "hottest day" etc to match designs
 
 # import pandas for Data Frame manipulation
 from calendar import MONDAY, TUESDAY, WEDNESDAY, weekday
@@ -65,7 +67,7 @@ TUESDAY_DC_END_TIME = pd.to_datetime('2022-07-05 23:59:00')
 WEDNESDAY_CLASS_START_TIME_1 = pd.to_datetime('2022-07-06 08:00:00')
 WEDNESDAY_CLASS_END_TIME_1 = pd.to_datetime('2022-07-06 11:20:00')
 WEDNESDAY_LOUNGE_START_TIME = pd.to_datetime('2022-07-06 11:20:00')
-WEDNESDAY_LOUNGE_END_TIME = pd.to_datetime('2022-07-06 12:30:00')
+WEDNESDAY_LOUNGE_END_TIME = pd.to_datetime('2022-07-06 12:20:00')
 WEDNESDAY_CLASS_START_TIME_2 = pd.to_datetime('2022-07-06 12:30:00')
 WEDNESDAY_CLASS_END_TIME_2 = pd.to_datetime('2022-07-06 17:00:00')
 WEDNESDAY_DC_START_TIME = pd.to_datetime('2022-07-06 17:00:00')
