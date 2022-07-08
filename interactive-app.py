@@ -119,7 +119,6 @@ fig.update_xaxes(tickformat="%I:%M %p")
 
 # CALLBACKS FOR BUTTONS:
 @app.callback(
-    # `component_id`, `component_property`
     Output(component_id='graph', component_property='figure'),
     Input(component_id='monday-button', component_property='n_clicks'),
     Input(component_id='tuesday-button', component_property='n_clicks'),
@@ -233,53 +232,6 @@ def updatePlotForDate(date):
             DC_end_time = THURSDAY_DC_END_TIME
 
     figure = fig
-
-    # BRUTE FORCE APPROACH: This code completely redraws the figure each time we select a new day
-    # I've commented this out in favour of using the update_traces method to improve performance
-    # I'm keeping it here in case update_traces turns out to be buggy
-    
-    # figure.data = []
-
-    # # array of the 3 columns of data in the csv that we will plot against time
-    # plots = ['Temperature', 'Humidity', 'Light']
-    # # enumerate through all of the subplots
-    # for index, plot in enumerate(plots, start=1):
-    #     # Add E7 6008 section
-    #     figure.add_trace((go.Scatter(
-    #         x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
-    #         (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), 'DateTime'],
-    #         y=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
-    #         (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), plot],
-    #         mode='lines',
-    #         name='E7 6008',
-    #         connectgaps=False,
-    #         line=dict(color='#FF2D2D'),
-    #         legendgroup=index,
-    #     )), row=index, col=1)
-
-    #     # Add SYDE lounge section
-    #     figure.add_trace((go.Scatter(
-    #         x=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), 'DateTime'],
-    #         y=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), plot],
-    #         mode='lines',
-    #         name='SYDE lounge',
-    #         connectgaps=False,
-    #         line=dict(color='#5048E5'),
-    #         legendgroup=index,
-    #     )), row=index, col=1)
-
-    #     # Add DC section
-    #     figure.add_trace((go.Scatter(
-    #         x=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), 'DateTime'],
-    #         y=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), plot],
-    #         mode='lines',
-    #         name='DC library',
-    #         connectgaps=False,
-    #         line=dict(color='#62B013'),
-    #         legendgroup=index,
-    #     )), row=index, col=1)
-
-    # return figure
 
     # array of the 3 columns of data in the csv that we will plot against time
     plots = ['Temperature', 'Humidity', 'Light']
