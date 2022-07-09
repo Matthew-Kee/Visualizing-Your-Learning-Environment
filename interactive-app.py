@@ -21,6 +21,8 @@
 
 # import pandas for Data Frame manipulation
 from calendar import MONDAY, TUESDAY, WEDNESDAY, weekday
+from re import match
+
 import pandas as pd
 
 # import NumPy for number manipulation
@@ -29,9 +31,9 @@ from numpy import NaN
 # import enums for better match statements
 from enum import Enum
 
-# import Dash class, the dcc (Dash Core Components) module, Dash html, callback context, 
+# import Dash class, the dcc (Dash Core Components) module, Dash html, callback context,
 # Output and Input (for callbacks), and the dbc (Dash Bootstrap Components) module
-from dash import Dash, dcc, html, callback_context, Output, Input  
+from dash import Dash, dcc, html, callback_context, Output, Input
 import dash_bootstrap_components as dbc
 
 # import Plotly express module, Plotly graph objects, and the make_subplots function
@@ -41,9 +43,9 @@ from plotly.subplots import make_subplots
 
 # STYLES:
 whiteButtonStyle = {'background-color': 'white',
-                      'color': 'black',
-                      'height': '50px',
-                      'width': '400px'}
+                    'color': 'black',
+                    'height': '50px',
+                    'width': '400px'}
 
 # CONSTANTS:
 MONDAY_CLASS_START_TIME_1 = pd.to_datetime('2022-07-04 08:00:00')
@@ -84,6 +86,7 @@ THURSDAY_DC_END_TIME = pd.to_datetime('2022-07-07 23:59:00')
 
 FIGURE_HEIGHT = 1000
 
+
 # ENUMS:
 class Weekday(Enum):
     MONDAY = 1
@@ -91,12 +94,14 @@ class Weekday(Enum):
     WEDNESDAY = 3
     THURSDAY = 4
 
+
 # PARSE CSV FILE:
 # read the csv of mock data from the file hosted on GitHub and import it into a df (data frame) which is a table of rows and columns
 csvFile = 'Data_July4ToJuly7.csv'
 df = px.pd.read_csv(csvFile)
 # use the Date and Time columns to create a DateTime column of DateTime objects
-df.insert(loc=0, column='DateTime', value=pd.to_datetime(df['Date'] + ' ' + df['Time'], format='%d-%m-%Y %H:%M:%S'), allow_duplicates=True)
+df.insert(loc=0, column='DateTime', value=pd.to_datetime(df['Date'] + ' ' + df['Time'], format='%d-%m-%Y %H:%M:%S'),
+          allow_duplicates=True)
 
 # DECLARE COMPONENTS:
 app = Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL])
@@ -112,10 +117,11 @@ graph = dcc.Graph(id='graph', figure={})
 
 fig = make_subplots(rows=3, cols=1, subplot_titles=('Temperature', 'Humidity', 'Light'))
 fig.update_layout(
-    height = FIGURE_HEIGHT,
+    height=FIGURE_HEIGHT,
     showlegend=True,
-    legend_tracegroupgap=(FIGURE_HEIGHT-100)/3)
+    legend_tracegroupgap=(FIGURE_HEIGHT - 100) / 3)
 fig.update_xaxes(tickformat="%I:%M %p")
+
 
 # CALLBACKS FOR BUTTONS:
 @app.callback(
@@ -136,7 +142,7 @@ def update_figure(monday, tuesday, wednesday, thursday):
         return updatePlotForDate(Weekday.THURSDAY)
     else:
         return createDefaultPlot()
-        
+
 
 def createDefaultPlot():
     figure = fig
@@ -148,10 +154,11 @@ def createDefaultPlot():
     for index, plot in enumerate(plots, start=1):
         # Add E7 6008 section
         figure.add_trace((go.Scatter(
-            x=df.loc[(df['DateTime'] > MONDAY_CLASS_START_TIME_1) & (df['DateTime'] < MONDAY_CLASS_END_TIME_1) | 
-            (df['DateTime'] > MONDAY_CLASS_START_TIME_2) & (df['DateTime'] < MONDAY_CLASS_END_TIME_2), 'DateTime'],
-            y=df.loc[(df['DateTime'] > MONDAY_CLASS_START_TIME_1) & (df['DateTime'] < MONDAY_CLASS_END_TIME_1) | 
-            (df['DateTime'] > MONDAY_CLASS_START_TIME_2) & (df['DateTime'] < MONDAY_CLASS_END_TIME_2), plot],
+            x=df.loc[(df['DateTime'] > MONDAY_CLASS_START_TIME_1) & (df['DateTime'] < MONDAY_CLASS_END_TIME_1) |
+                     (df['DateTime'] > MONDAY_CLASS_START_TIME_2) & (
+                             df['DateTime'] < MONDAY_CLASS_END_TIME_2), 'DateTime'],
+            y=df.loc[(df['DateTime'] > MONDAY_CLASS_START_TIME_1) & (df['DateTime'] < MONDAY_CLASS_END_TIME_1) |
+                     (df['DateTime'] > MONDAY_CLASS_START_TIME_2) & (df['DateTime'] < MONDAY_CLASS_END_TIME_2), plot],
             mode='lines',
             name='E7 6008',
             connectgaps=False,
@@ -161,7 +168,8 @@ def createDefaultPlot():
 
         # Add SYDE lounge section
         figure.add_trace((go.Scatter(
-            x=df.loc[(df['DateTime'] > MONDAY_LOUNGE_START_TIME) & (df['DateTime'] < MONDAY_LOUNGE_END_TIME), 'DateTime'],
+            x=df.loc[
+                (df['DateTime'] > MONDAY_LOUNGE_START_TIME) & (df['DateTime'] < MONDAY_LOUNGE_END_TIME), 'DateTime'],
             y=df.loc[(df['DateTime'] > MONDAY_LOUNGE_START_TIME) & (df['DateTime'] < MONDAY_LOUNGE_END_TIME), plot],
             mode='lines',
             name='SYDE lounge',
@@ -181,7 +189,23 @@ def createDefaultPlot():
             legendgroup=index,
         )), row=index, col=1)
 
+    figure.add_hrect(y0=23, y1=24, row=1, col=1,
+                     annotation_text="hi", annotation_position="top left",
+                     annotation=dict(font_size=10, font_family="Times New Roman"),
+                     fillcolor="green", opacity=0.5, line_width=2
+                     )
+    figure.add_hrect(y0=58, y1=60, row=2, col=1,
+                     annotation_text="hi", annotation_position="top left",
+                     annotation=dict(font_size=10, font_family="Times New Roman"),
+                     fillcolor="green", opacity=0.5, line_width=2
+                     )
+    figure.add_hrect(y0=500, y1=510, row=3, col=1,
+                     annotation_text="hi", annotation_position="top left",
+                     annotation=dict(font_size=10, font_family="Times New Roman"),
+                     fillcolor="green", opacity=0.5, line_width=2
+                     )
     return figure
+
 
 def updatePlotForDate(date):
     class_start_time_1 = None
@@ -239,10 +263,10 @@ def updatePlotForDate(date):
     for index, plot in enumerate(plots, start=1):
         # Update E7 6008 section
         figure.update_traces(
-            x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
-            (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), 'DateTime'],
-            y=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) | 
-            (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), plot],
+            x=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) |
+                     (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), 'DateTime'],
+            y=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) |
+                     (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), plot],
             selector=dict(name="E7 6008"),
             row=index
         )
@@ -265,20 +289,22 @@ def updatePlotForDate(date):
 
     return figure
 
+
 # LAYOUT COMPONENTS USING GRIDS:
 # declare a top-level container
 app.layout = dbc.Container([
     # we currently have a single row
-    dbc.Row([ 
+    dbc.Row([
         # add a column on the left with the title, subtitle, week, buttons, and summary
-        dbc.Col([title, subtitle, week, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, summaryTitle], width=4),
+        dbc.Col([title, subtitle, week, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, summaryTitle],
+                width=4),
         # add a column on the right for the graph, and set it to display fig which has our 3 subplots
         dbc.Col([dcc.Graph(
             id='graph',
             figure=fig
         ), ], width=8)
     ]),
-], fluid=True) # set the container to expand fluidly to fill space on the page
+], fluid=True)  # set the container to expand fluidly to fill space on the page
 
 # RUN THE APP:
 if __name__ == '__main__':
