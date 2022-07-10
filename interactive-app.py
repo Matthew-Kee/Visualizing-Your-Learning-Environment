@@ -126,7 +126,7 @@ df.insert(loc=0, column='DateTime', value=pd.to_datetime(df['Date'] + ' ' + df['
 # DECLARE COMPONENTS:
 app = Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL])
 title = dcc.Markdown(children='SYDE Environment Dashboard', style=titleStyle)
-subtitle = dcc.Markdown(children='Visualizing daily student experience in place and time. Collected data is compared against acceptable ranges defined by ASHRAE (American Society of Heating, Refrigerating and Air-Conditioning Engineers) and ICS (International Classification for Standards).')
+subtitle = dcc.Markdown(children='Visualizing daily student experience in place and time. Collected data is compared against acceptable ranges defined by ASHRAE (American Society of Heating, Refrigerating and Air-Conditioning Engineers) and CEN (Comité Européen de Normalisation/European Committee for Standardization).')
 week = dcc.Markdown(children='July 4th to July 7th', style=datesStyle)
 mondayButton = html.Button('Monday', id='monday-button', n_clicks=0, style=whiteButtonStyle)
 tuesdayButton = html.Button('Tuesday | MOST HUMID', id='tuesday-button', n_clicks=0, style=whiteButtonStyle)
@@ -244,12 +244,7 @@ def createDefaultPlot():
                         fillcolor="#5048E5", opacity=0.10, line_width=2
                         )
     figure.add_hrect(y0=500, y1=1000, row=3, col=1,
-                        annotation_text="ICS acceptable range for lecture halls: 500+ lux", annotation_position="top right",
-                        annotation=dict(font_size=20, font_family="Arial"),
-                        fillcolor="#5048E5", opacity=0.10, line_width=2
-                        )
-    figure.add_hrect(y0=500, y1=1000, row=4, col=1,
-                        annotation_text="ICS acceptable range for lecture halls: 500+ lux", annotation_position="top right",
+                        annotation_text="CEN acceptable range for lecture halls: 500+ lux", annotation_position="top right",
                         annotation=dict(font_size=20, font_family="Arial"),
                         fillcolor="#5048E5", opacity=0.10, line_width=2
                         )
