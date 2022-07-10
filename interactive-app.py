@@ -45,7 +45,10 @@ from plotly.subplots import make_subplots
 whiteButtonStyle = {'background-color': 'white',
                     'color': 'black',
                     'height': '50px',
-                    'width': '400px'}
+                    'width': '380px',
+                    'border-radius': '20px',
+                    'margin': '10px'
+                    }
 
 # CONSTANTS:
 MONDAY_CLASS_START_TIME_1 = pd.to_datetime('2022-07-04 08:00:00')
@@ -86,6 +89,9 @@ THURSDAY_DC_END_TIME = pd.to_datetime('2022-07-07 23:59:00')
 
 FIGURE_HEIGHT = 1000
 
+SUMMARY_LIST = ['Hottest (August 15 to 18)','Highest humidex (June 6 to 9)'
+    , 'Sunniest (August 15 to 18)', 'Coldest (January 12 to 15)', 'Darkest (December 16 to 19)']
+
 
 # ENUMS:
 class Weekday(Enum):
@@ -105,14 +111,16 @@ df.insert(loc=0, column='DateTime', value=pd.to_datetime(df['Date'] + ' ' + df['
 
 # DECLARE COMPONENTS:
 app = Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL])
-title = dcc.Markdown(children='Epic Title')
+title = dcc.Markdown(children='SYDE Environment Dashboard')
 subtitle = dcc.Markdown(children='Visualizing daily student experience in place and time.')
 week = dcc.Markdown(children='July 4th to July 7th')
-mondayButton = html.Button('Monday', id='monday-button', n_clicks=0, style=whiteButtonStyle)
+mondayButton = html.Button('Monday | HOTTEST', id='monday-button', n_clicks=0, style=whiteButtonStyle)
 tuesdayButton = html.Button('Tuesday', id='tuesday-button', n_clicks=0, style=whiteButtonStyle)
-wednesdayButton = html.Button('Wednesday', id='wednesday-button', n_clicks=0, style=whiteButtonStyle)
-thursdayButton = html.Button('Thursday', id='thursday-button', n_clicks=0, style=whiteButtonStyle)
+wednesdayButton = html.Button('Wednesday | SUNNIEST', id='wednesday-button', n_clicks=0, style=whiteButtonStyle)
+thursdayButton = html.Button('Thursday | COLDEST', id='thursday-button', n_clicks=0, style=whiteButtonStyle)
 summaryTitle = dcc.Markdown(children='Check out other weeks:')
+summarySubtitle = dcc.Markdown(children='Extreme Weeks')
+summary = html.Ul(id='newlist', children=[html.Li(i) for i in SUMMARY_LIST])
 graph = dcc.Graph(id='graph', figure={})
 
 fig = make_subplots(rows=3, cols=1, subplot_titles=('Temperature', 'Humidity', 'Light'))
@@ -121,6 +129,7 @@ fig.update_layout(
     showlegend=True,
     legend_tracegroupgap=(FIGURE_HEIGHT - 100) / 3)
 fig.update_xaxes(tickformat="%I:%M %p")
+
 
 
 # CALLBACKS FOR BUTTONS:
@@ -189,21 +198,28 @@ def createDefaultPlot():
             legendgroup=index,
         )), row=index, col=1)
 
-    figure.add_hrect(y0=23, y1=24, row=1, col=1,
-                     annotation_text="hi", annotation_position="top left",
-                     annotation=dict(font_size=10, font_family="Times New Roman"),
-                     fillcolor="green", opacity=0.5, line_width=2
+    figure.add_hrect(y0=20.8, y1=27.2, row=1, col=1,
+                     annotation_text="20.8°C - 27.2°C", annotation_position="top right",
+                     annotation=dict(font_size=20, font_family="Arial"),
+                     fillcolor="blue", opacity=0.10, line_width=2
                      )
-    figure.add_hrect(y0=58, y1=60, row=2, col=1,
-                     annotation_text="hi", annotation_position="top left",
-                     annotation=dict(font_size=10, font_family="Times New Roman"),
-                     fillcolor="green", opacity=0.5, line_width=2
+    figure.add_hrect(y0=0, y1=60, row=2, col=1,
+                     annotation_text="0%-60%", annotation_position="top right",
+                     annotation=dict(font_size=20, font_family="Arial"),
+                     fillcolor="blue", opacity=0.10, line_width=2
                      )
-    figure.add_hrect(y0=500, y1=510, row=3, col=1,
-                     annotation_text="hi", annotation_position="top left",
-                     annotation=dict(font_size=10, font_family="Times New Roman"),
-                     fillcolor="green", opacity=0.5, line_width=2
+    figure.add_hrect(y0=500, y1=2000, row=3, col=1,
+                     annotation_text="500+", annotation_position="top right",
+                     annotation=dict(font_size=20, font_family="Arial"),
+                     fillcolor="blue", opacity=0.10, line_width=2
                      )
+    figure['layout']['xaxis']['title']='Time'
+    figure['layout']['xaxis2']['title']='Time'
+    figure['layout']['xaxis3']['title']='Time'
+    figure['layout']['yaxis']['title']='Temperature (°C)'
+    figure['layout']['yaxis2']['title']='Humidity (%)'
+    figure['layout']['yaxis3']['title']='Lux'
+
     return figure
 
 
@@ -296,7 +312,7 @@ app.layout = dbc.Container([
     # we currently have a single row
     dbc.Row([
         # add a column on the left with the title, subtitle, week, buttons, and summary
-        dbc.Col([title, subtitle, week, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, summaryTitle],
+        dbc.Col([title, subtitle, week, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, summaryTitle, summarySubtitle, summary],
                 width=4),
         # add a column on the right for the graph, and set it to display fig which has our 3 subplots
         dbc.Col([dcc.Graph(
