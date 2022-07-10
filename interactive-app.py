@@ -201,6 +201,7 @@ def createDefaultPlot():
                      (df['DateTime'] > MONDAY_CLASS_START_TIME_2) & (df['DateTime'] < MONDAY_CLASS_END_TIME_2), plot],
             mode='lines',
             name='E7 6008',
+            # name = 'Classroom', # The name of the location is changed to be more general to generate graphs for our prototype that targets a more general third-person audience (incoming students/parents)
             connectgaps=False,
             line=dict(color='#FF2D2D'),
             legendgroup=index,
@@ -213,6 +214,7 @@ def createDefaultPlot():
             y=df.loc[(df['DateTime'] > MONDAY_LOUNGE_START_TIME) & (df['DateTime'] < MONDAY_LOUNGE_END_TIME), plot],
             mode='lines',
             name='SYDE lounge',
+            # name = 'Lounge/lunch room', # The name of the location is changed to be more general to generate graphs for our prototype that targets a more general third-person audience (incoming students/parents)
             connectgaps=False,
             line=dict(color='#5048E5'),
             legendgroup=index,
@@ -224,6 +226,7 @@ def createDefaultPlot():
             y=df.loc[(df['DateTime'] > MONDAY_DC_START_TIME) & (df['DateTime'] < MONDAY_DC_END_TIME), plot],
             mode='lines',
             name='DC library',
+            # name = 'Library study space', # The name of the location is changed to be more general to generate graphs for our prototype that targets a more general third-person audience (incoming students/parents)
             connectgaps=False,
             line=dict(color='#62B013'),
             legendgroup=index,
@@ -314,6 +317,7 @@ def updatePlotForDate(date):
             y=df.loc[(df['DateTime'] > class_start_time_1) & (df['DateTime'] < class_end_time_1) |
                      (df['DateTime'] > class_start_time_2) & (df['DateTime'] < class_end_time_2), plot],
             selector=dict(name="E7 6008"),
+            # selector=dict(name="Classroom"), # The name of the location is changed to be more general to generate graphs for our prototype that targets a more general third-person audience (incoming students/parents)
             row=index
         )
 
@@ -322,6 +326,7 @@ def updatePlotForDate(date):
             x=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), 'DateTime'],
             y=df.loc[(df['DateTime'] > lounge_start_time) & (df['DateTime'] < lounge_end_time), plot],
             selector=dict(name="SYDE lounge"),
+            # selector=dict(name="Lounge/lunch room"), # The name of the location is changed to be more general to generate graphs for our prototype that targets a more general third-person audience (incoming students/parents)
             row=index
         )
 
@@ -330,6 +335,7 @@ def updatePlotForDate(date):
             x=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), 'DateTime'],
             y=df.loc[(df['DateTime'] > DC_start_time) & (df['DateTime'] < DC_end_time), plot],
             selector=dict(name="DC library"),
+            # selector=dict(name="Library study space"), # The name of the location is changed to be more general to generate graphs for our prototype that targets a more general third-person audience (incoming students/parents)
             row=index
         )
 
