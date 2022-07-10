@@ -92,14 +92,12 @@ FIGURE_HEIGHT = 1000
 SUMMARY_LIST = ['Hottest (August 15 to 18)','Highest humidex (June 6 to 9)'
     , 'Sunniest (August 15 to 18)', 'Coldest (January 12 to 15)', 'Darkest (December 16 to 19)']
 
-
 # ENUMS:
 class Weekday(Enum):
     MONDAY = 1
     TUESDAY = 2
     WEDNESDAY = 3
     THURSDAY = 4
-
 
 # PARSE CSV FILE:
 # read the csv of mock data from the file hosted on GitHub and import it into a df (data frame) which is a table of rows and columns
@@ -123,13 +121,24 @@ summarySubtitle = dcc.Markdown(children='Extreme Weeks')
 summary = html.Ul(id='newlist', children=[html.Li(i) for i in SUMMARY_LIST])
 graph = dcc.Graph(id='graph', figure={})
 
-fig = make_subplots(rows=3, cols=1, subplot_titles=('Temperature', 'Humidity', 'Light'))
+# array of the 3 columns of data in the csv that we will plot against time
+plots = ['Temperature', 'Humidity', 'Light', 'Sunlight']
+fig = make_subplots(rows=4, cols=1, subplot_titles=plots)
 fig.update_layout(
     height=FIGURE_HEIGHT,
     showlegend=True,
     legend_tracegroupgap=(FIGURE_HEIGHT - 100) / 3)
 fig.update_xaxes(tickformat="%I:%M %p")
 
+# Set the axes for all the figures
+fig['layout']['xaxis']['title']='Time'
+fig['layout']['xaxis2']['title']='Time'
+fig['layout']['xaxis3']['title']='Time'
+fig['layout']['xaxis4']['title']='Time'
+fig['layout']['yaxis']['title']='Temperature (°C)'
+fig['layout']['yaxis2']['title']='Humidity (%)'
+fig['layout']['yaxis3']['title']='Lux'
+fig['layout']['yaxis4']['title']='Lumen'
 
 
 # CALLBACKS FOR BUTTONS:
@@ -152,13 +161,10 @@ def update_figure(monday, tuesday, wednesday, thursday):
     else:
         return createDefaultPlot()
 
-
 def createDefaultPlot():
     figure = fig
     figure.data = []
 
-    # array of the 3 columns of data in the csv that we will plot against time
-    plots = ['Temperature', 'Humidity', 'Light']
     # enumerate through all of the subplots
     for index, plot in enumerate(plots, start=1):
         # Add E7 6008 section
@@ -198,27 +204,23 @@ def createDefaultPlot():
             legendgroup=index,
         )), row=index, col=1)
 
+
+    # Add acceptable ranges as an overlay onto each plot
     figure.add_hrect(y0=20.8, y1=27.2, row=1, col=1,
-                     annotation_text="20.8°C - 27.2°C", annotation_position="top right",
+                     annotation_text="ASHRAE standard range: 20.8°C - 27.2°C", annotation_position="top right",
                      annotation=dict(font_size=20, font_family="Arial"),
-                     fillcolor="blue", opacity=0.10, line_width=2
+                     fillcolor="#5048E5", opacity=0.10, line_width=2
                      )
     figure.add_hrect(y0=0, y1=60, row=2, col=1,
-                     annotation_text="0%-60%", annotation_position="top right",
+                     annotation_text="ASHRAE standard range: 0%-60%", annotation_position="top right",
                      annotation=dict(font_size=20, font_family="Arial"),
-                     fillcolor="blue", opacity=0.10, line_width=2
+                     fillcolor="#5048E5", opacity=0.10, line_width=2
                      )
     figure.add_hrect(y0=500, y1=2000, row=3, col=1,
-                     annotation_text="500+", annotation_position="top right",
+                     annotation_text="ASHRAE standard range: 500+ lux", annotation_position="top right",
                      annotation=dict(font_size=20, font_family="Arial"),
-                     fillcolor="blue", opacity=0.10, line_width=2
+                     fillcolor="#5048E5", opacity=0.10, line_width=2
                      )
-    figure['layout']['xaxis']['title']='Time'
-    figure['layout']['xaxis2']['title']='Time'
-    figure['layout']['xaxis3']['title']='Time'
-    figure['layout']['yaxis']['title']='Temperature (°C)'
-    figure['layout']['yaxis2']['title']='Humidity (%)'
-    figure['layout']['yaxis3']['title']='Lux'
 
     return figure
 
@@ -273,8 +275,6 @@ def updatePlotForDate(date):
 
     figure = fig
 
-    # array of the 3 columns of data in the csv that we will plot against time
-    plots = ['Temperature', 'Humidity', 'Light']
     # enumerate through all of the subplots
     for index, plot in enumerate(plots, start=1):
         # Update E7 6008 section
