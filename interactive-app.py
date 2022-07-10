@@ -1,23 +1,10 @@
 # Hi Professor! Ignore the setup steps below. 
-# You can view the prototype hosted online at [ADD LINK HERE]. Thanks!
+# You can view the prototype hosted online at https://interactive-app1237.herokuapp.com/. Thanks!
 
 # Setup (for devs):
 # pip install dash
 # pip install dash-bootstrap-components
 # pip install pandas
-
-# TODO:
-# Functionality we NEED before any visual changes:
-# - Add callbacks so that the Monday-Thursday buttons/dropdown - done!
-# - Figure out how to do the line segments for different locations - done!
-# - Write a default function that sets up the graph for the first time and is only called once - done!
-# - Write a function that updates the graph for data from each specific day when buttons are clicked - done!
-
-# Visual nice-to-haves:
-# Add images to each dropdown option
-# Increase the size of the graphs
-# Add axis titles and units to the axes
-# Add a summary, buttons that link to "hottest day" etc to match designs
 
 # import pandas for Data Frame manipulation
 from calendar import MONDAY, TUESDAY, WEDNESDAY, weekday
@@ -49,6 +36,34 @@ whiteButtonStyle = {'background-color': 'white',
                     'border-radius': '20px',
                     'margin': '10px'
                     }
+
+titleStyle = {'font-family': 'Helvetica',
+                'font-size': '30px',
+                'font-weight': '400',
+                'line-height': '34px',
+                'color': '#000000'
+                }
+
+datesStyle = {'font-family': 'Helvetica',
+                'font-size': '24px',
+                'font-weight': '400',
+                'line-height': '28px',
+                'color': '#000000'
+                }
+
+subtitleStyle = {'font-family': 'Helvetica',
+                'font-size': '20px',
+                'font-weight': '700',
+                'line-height': '23px',
+                'color': '#000000'
+                }
+
+boldStyle = {'font-family': 'Helvetica',
+            'font-size': '16px',
+            'font-weight': '700',
+            'line-height': '24px',
+            'color': '#000000'
+            }
 
 # CONSTANTS:
 MONDAY_CLASS_START_TIME_1 = pd.to_datetime('2022-07-04 08:00:00')
@@ -91,6 +106,7 @@ FIGURE_HEIGHT = 1000
 
 SUMMARY_LIST = ['Hottest (August 15 to 18)','Highest humidex (June 6 to 9)'
     , 'Sunniest (August 15 to 18)', 'Coldest (January 12 to 15)', 'Darkest (December 16 to 19)']
+AVERAGED_WEEKS_LIST = ['Winter', 'Spring', 'Summer', 'Fall']
 
 # ENUMS:
 class Weekday(Enum):
@@ -109,28 +125,32 @@ df.insert(loc=0, column='DateTime', value=pd.to_datetime(df['Date'] + ' ' + df['
 
 # DECLARE COMPONENTS:
 app = Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL])
-title = dcc.Markdown(children='SYDE Environment Dashboard')
-subtitle = dcc.Markdown(children='Visualizing daily student experience in place and time.')
-week = dcc.Markdown(children='July 4th to July 7th')
-mondayButton = html.Button('Monday | HOTTEST', id='monday-button', n_clicks=0, style=whiteButtonStyle)
-tuesdayButton = html.Button('Tuesday', id='tuesday-button', n_clicks=0, style=whiteButtonStyle)
-wednesdayButton = html.Button('Wednesday | SUNNIEST', id='wednesday-button', n_clicks=0, style=whiteButtonStyle)
-thursdayButton = html.Button('Thursday | COLDEST', id='thursday-button', n_clicks=0, style=whiteButtonStyle)
-summaryTitle = dcc.Markdown(children='Check out other weeks:')
-summarySubtitle = dcc.Markdown(children='Extreme Weeks')
-summary = html.Ul(id='newlist', children=[html.Li(i) for i in SUMMARY_LIST])
+title = dcc.Markdown(children='SYDE Environment Dashboard', style=titleStyle)
+subtitle = dcc.Markdown(children='Visualizing daily student experience in place and time. Collected data is compared against acceptable ranges defined by ASHRAE (American Society of Heating, Refrigerating and Air-Conditioning Engineers) and ICS (International Classification for Standards).')
+week = dcc.Markdown(children='July 4th to July 7th', style=datesStyle)
+mondayButton = html.Button('Monday', id='monday-button', n_clicks=0, style=whiteButtonStyle)
+tuesdayButton = html.Button('Tuesday | MOST HUMID', id='tuesday-button', n_clicks=0, style=whiteButtonStyle)
+wednesdayButton = html.Button('Wednesday | HOTTEST', id='wednesday-button', n_clicks=0, style=whiteButtonStyle)
+thursdayButton = html.Button('Thursday | BRIGHTEST', id='thursday-button', n_clicks=0, style=whiteButtonStyle)
+summaryTitle = dcc.Markdown(children='Check out other weeks:', style=subtitleStyle)
+summarySubtitle = dcc.Markdown(children='Extreme Weeks', style=boldStyle)
+summary = html.Ul(id='summary-list', children=[html.Li(i, style={'text-decoration': 'underline'}) for i in SUMMARY_LIST])
+averagedWeeksTitle = dcc.Markdown(children='Averaged weeks for', style=boldStyle)
+averagedWeeks = html.Ul(id='averaged-weeks-list', children=[html.Li(i, style={'text-decoration': 'underline'}) for i in AVERAGED_WEEKS_LIST])
 graph = dcc.Graph(id='graph', figure={})
 
 # array of the 3 columns of data in the csv that we will plot against time
 plots = ['Temperature', 'Humidity', 'Light', 'Sunlight']
 fig = make_subplots(rows=4, cols=1, subplot_titles=plots)
+
+# set up layout of the figure
 fig.update_layout(
-    height=FIGURE_HEIGHT,
-    showlegend=True,
-    legend_tracegroupgap=(FIGURE_HEIGHT - 100) / 3)
+height=FIGURE_HEIGHT,
+showlegend=True,
+legend_tracegroupgap=(FIGURE_HEIGHT - 150) / 4)
 fig.update_xaxes(tickformat="%I:%M %p")
 
-# Set the axes for all the figures
+# set the axes for all the subplots
 fig['layout']['xaxis']['title']='Time'
 fig['layout']['xaxis2']['title']='Time'
 fig['layout']['xaxis3']['title']='Time'
@@ -140,6 +160,11 @@ fig['layout']['yaxis2']['title']='Humidity (%)'
 fig['layout']['yaxis3']['title']='Lux'
 fig['layout']['yaxis4']['title']='Lumen'
 
+# set the range on the y axes for all the subplots
+fig.update_layout(yaxis = dict(range=[18,30]))
+fig.update_layout(yaxis2 = dict(range=[0,100]))
+fig.update_layout(yaxis3 = dict(range=[0,1000]))
+fig.update_layout(yaxis4 = dict(range=[0,1000]))
 
 # CALLBACKS FOR BUTTONS:
 @app.callback(
@@ -204,23 +229,27 @@ def createDefaultPlot():
             legendgroup=index,
         )), row=index, col=1)
 
-
     # Add acceptable ranges as an overlay onto each plot
     figure.add_hrect(y0=20.8, y1=27.2, row=1, col=1,
-                     annotation_text="ASHRAE standard range: 20.8°C - 27.2°C", annotation_position="top right",
-                     annotation=dict(font_size=20, font_family="Arial"),
-                     fillcolor="#5048E5", opacity=0.10, line_width=2
-                     )
+                        annotation_text="ASHRAE acceptable range: 20.8°C - 27.2°C", annotation_position="top right",
+                        annotation=dict(font_size=20, font_family="Arial"),
+                        fillcolor="#5048E5", opacity=0.10, line_width=2
+                        )
     figure.add_hrect(y0=0, y1=60, row=2, col=1,
-                     annotation_text="ASHRAE standard range: 0%-60%", annotation_position="top right",
-                     annotation=dict(font_size=20, font_family="Arial"),
-                     fillcolor="#5048E5", opacity=0.10, line_width=2
-                     )
-    figure.add_hrect(y0=500, y1=2000, row=3, col=1,
-                     annotation_text="ASHRAE standard range: 500+ lux", annotation_position="top right",
-                     annotation=dict(font_size=20, font_family="Arial"),
-                     fillcolor="#5048E5", opacity=0.10, line_width=2
-                     )
+                        annotation_text="ASHRAE acceptable range: 0%-60%", annotation_position="top right",
+                        annotation=dict(font_size=20, font_family="Arial"),
+                        fillcolor="#5048E5", opacity=0.10, line_width=2
+                        )
+    figure.add_hrect(y0=500, y1=1000, row=3, col=1,
+                        annotation_text="ICS acceptable range for lecture halls: 500+ lux", annotation_position="top right",
+                        annotation=dict(font_size=20, font_family="Arial"),
+                        fillcolor="#5048E5", opacity=0.10, line_width=2
+                        )
+    figure.add_hrect(y0=500, y1=1000, row=4, col=1,
+                        annotation_text="ICS acceptable range for lecture halls: 500+ lux", annotation_position="top right",
+                        annotation=dict(font_size=20, font_family="Arial"),
+                        fillcolor="#5048E5", opacity=0.10, line_width=2
+                        )
 
     return figure
 
@@ -235,6 +264,7 @@ def updatePlotForDate(date):
     DC_start_time = None
     DC_end_time = None
 
+    # set the start and end times for each location depending on the day (based on the class schedule)
     match date:
         case Weekday.MONDAY:
             class_start_time_1 = MONDAY_CLASS_START_TIME_1
@@ -311,8 +341,8 @@ def updatePlotForDate(date):
 app.layout = dbc.Container([
     # we currently have a single row
     dbc.Row([
-        # add a column on the left with the title, subtitle, week, buttons, and summary
-        dbc.Col([title, subtitle, week, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, summaryTitle, summarySubtitle, summary],
+        # add a column on the left with the title, subtitle, week, buttons, and summary (all the elements other than the plots)
+        dbc.Col([title, subtitle, week, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, summaryTitle, summarySubtitle, summary, averagedWeeksTitle, averagedWeeks],
                 width=4),
         # add a column on the right for the graph, and set it to display fig which has our 3 subplots
         dbc.Col([dcc.Graph(
