@@ -8,6 +8,8 @@ The web app displays 4 interactive plots with data that we collected over the co
 
 Data was collected using a portable device that we designed and built, run by an Arduino, with code written in C. 
 
+The app was deployed to Heroku using Docker. 
+
 ## Conclusion
 **Our visualizer clearly demonstrated that classrooms exceed the acceptable standards for both temperature and humidity, while study spaces failed to meet minimum light requirements. User interviews with students confirmed that these conditions affected their ability to learn on campus. This project was presented to TAs, professors, and university administrators in an effort to demand better learning environments for our students.**
 
