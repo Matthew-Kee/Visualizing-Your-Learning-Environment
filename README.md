@@ -1,5 +1,5 @@
-# Visualizing-Your-Learning-Environment
-This is a web app that enables University of Waterloo students to visualize the environmental conditions in their classrooms and learning spaces, and compare them to industry standards for minimum/maximum allowable temperature, humidity, light, and sunlight. 
+# What will your learning environment really feel like?
+This is a web app that enables current and incoming University of Waterloo students to visualize the environmental conditions in their classrooms and learning spaces, and compare them to industry standards for minimum/maximum allowable temperature, humidity, light, and sunlight. 
 
 This was one of three design options that were prototyped by our team to deliver information to students and empower them to advocate for better learning conditions and improved quality of life on campus. 
 
